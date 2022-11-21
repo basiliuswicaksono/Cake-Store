@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  app:
+    container_name: app
+    build: .
+    ports: 
+      - 4000:4000 
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - db-mariadb
+    networks:
+      - backend
+
+  
+  db-mariadb:
+    image: mariadb:latest
+    container_name: db_mariadb
+    ports: 
+      - 3306:3306
+    restart : always
+    environment: 
+      # - MYSQL_ROOT_HOST='db-mariadb'
+      - MYSQL_USER=user1
+      - MYSQL_PASSWORD=mypassword
+      - MYSQL_DATABASE=store
+      - MYSQL_ROOT_PASSWORD=mypassword
+    volumes:
+      - database_mariadb:/var/lib/mysql
+    networks:
+      - backend
+
+
+
+volumes:
+  api:
+  database_mariadb:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+    driver: bridge
